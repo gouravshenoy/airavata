@@ -1,0 +1,113 @@
+#
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+
+---
+- name: Create root directory
+  file: path="{{ doc_root_dir }}" state=directory
+  become: yes
+
+- include: install_deps_{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml
+
+# - name: Check previous deployments
+#   stat: path="{{ doc_root_dir }}" get_md5=no get_checksum=no
+#   register: check
+
+# Why? if it's new, we just created this dir above...
+# if not, can just pull from the git repo in the next task...
+#- name: delete previous deployments 
+#  file: path="{{ doc_root_dir }}" state=absent
+
+- name: Git clone php gateway
+  git: 
+   repo: "{{ pga_repo }}"
+   dest: "{{ doc_root_dir }}" 
+   version: "{{ git_branch }}"
+   update: yes
+   force: yes
+  become: yes
+
+- name: Create user data dir {{ user_data_dir }}
+  file: path="{{ user_data_dir }}" state=directory owner="{{user}}" group="{{group}}" mode=0777 recurse=yes
+  become: yes
+
+# - name: Allow selinux outbound connection from web server
+  # command: setsebool -P httpd_can_network_connect 1
+
+#SHOULD MAKE A PROFILE RATHER THAN DISABLING. SELINUX IS *GOOD*
+# going to permissive from enforcing doesn't require a reboot
+# permissive allows all, but still logs, allowing easy build
+# of a working profile.
+- name: set selinux permissive
+  selinux: state=permissive policy=default
+  become: yes
+  register: selinux_disable
+  when: ansible_os_family == "RedHat"
+
+- name: Run composer update
+  composer: command=update working_dir="{{ doc_root_dir }}"
+  become: yes
+
+# step 6: Change pga configurations
+- name: Copy pga config file
+  template: src=pga_config.php.j2 dest="{{ doc_root_dir }}/app/config/pga_config.php"
+  become: yes
+
+- name: Checkout the portal theme (if a custom theme is defined)
+  git:
+   repo: "{{ portal_theme_repo }}"
+   dest: "{{ doc_root_dir }}/public/themes/{{ portal_theme }}"
+   version: "master"
+   update: yes
+  when: portal_theme_repo != ""
+
+- name: give read permissions to doc root
+  file: path="{{ doc_root_dir }}" state=directory mode=a+rX recurse=yes
+  become: yes
+
+- name: give write permissions to storage dir
+  file: path="{{ doc_root_dir }}/app/storage" state=directory mode=0777 owner="{{user}}" group="{{group}}" recurse=yes
+  become: yes
+
+- name: Enable https and http service on public zone
+  firewalld: service="{{ item }}" permanent=true state=enabled zone=public immediate=True
+  with_items:
+    - http
+    - https
+  become: yes
+
+- name: copy virtual host config file
+  template: src=pga-vhost.conf.j2 dest={{ httpd_confd_file_location[ansible_os_family] }} backup=yes
+  become: yes
+  notify:
+    - restart httpd
+  when: not vhost_ssl
+
+- name: copy SSL enabled virtual host config file
+  template: src=pga-ssl-vhost.conf.j2 dest={{ httpd_confd_file_location[ansible_os_family] }} backup=yes
+  become: yes
+  notify:
+    - restart httpd
+  when: vhost_ssl
+
+- name: copy pga user's SSH key for the gateway data store
+  authorized_key:
+    user: "{{user}}"
+    key: "{{ gateway_data_store_ssh_public_key }}"
+  when: gateway_data_store_ssh_public_key != ""

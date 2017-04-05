@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,9 +16,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
 package org.apache.airavata.messaging.core;
 
 import org.apache.airavata.common.exception.AiravataException;
@@ -26,12 +24,13 @@ import org.apache.airavata.common.exception.AiravataException;
 /**
  * This is the basic publisher interface.
  */
+@FunctionalInterface
 public interface Publisher {
 
     /**
      *
-     * @param message object of message context which will include actual event and other information
+     * @param messageContext object of message context which will include actual event and other information
      * @throws AiravataException
      */
-    public void publish(MessageContext message) throws AiravataException;
+    public void publish(MessageContext messageContext) throws AiravataException;
 }

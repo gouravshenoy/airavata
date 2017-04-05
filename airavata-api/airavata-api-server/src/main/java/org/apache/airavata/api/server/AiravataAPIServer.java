@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,9 +16,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
 package org.apache.airavata.api.server;
 
 import com.google.inject.Guice;
@@ -64,14 +62,6 @@ public class AiravataAPIServer implements IServer{
 	
     public void startAiravataServer(Airavata.Processor<Airavata.Iface> airavataAPIServer) throws AiravataSystemException {
         try {
-            // creating experiment catalog db
-            ExperimentCatalogInitUtil.initializeDB();
-            // creating app catalog db
-            AppCatalogInitUtil.initializeDB();
-            // creating workflow catalog db
-            WorkflowCatalogInitUtil.initializeDB();
-            // creating credential store db
-            CredentialStoreInitUtil.initializeDB();
             final String serverHost = ServerSettings.getSetting(Constants.API_SERVER_HOST, null);
             if (!ServerSettings.isTLSEnabled()) {
                 final int serverPort = Integer.parseInt(ServerSettings.getSetting(Constants.API_SERVER_PORT, "8930"));
@@ -103,7 +93,6 @@ public class AiravataAPIServer implements IServer{
 				new Thread() {
 					public void run() {
                         server.serve();
-						ExperimentCatalogInitUtil.stopDerbyInServerMode();
 						setStatus(ServerStatus.STOPPED);
 						logger.info("Airavata API Server Stopped.");
 					}
@@ -139,7 +128,6 @@ public class AiravataAPIServer implements IServer{
                 new Thread() {
                     public void run() {
                         TLSServer.serve();
-                        ExperimentCatalogInitUtil.stopDerbyInServerMode();
                         setStatus(ServerStatus.STOPPED);
                         logger.info("Airavata API Server over TLS Stopped.");
                     }
@@ -169,8 +157,7 @@ public class AiravataAPIServer implements IServer{
         } catch (TTransportException e) {
             logger.error(e.getMessage());
             setStatus(ServerStatus.FAILED);
-            ExperimentCatalogInitUtil.stopDerbyInServerMode();
-			logger.error("Failed to start Gfac server ...");
+			logger.error("Failed to start API server ...");
 			throw new AiravataSystemException(AiravataErrorType.INTERNAL_ERROR);
         } catch (ApplicationSettingsException e) {
             logger.error(e.getMessage(), e);

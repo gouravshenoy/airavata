@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,8 +16,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
-*/
+ */
 package org.apache.airavata.registry.core.experiment.catalog.resources;
 
 import org.apache.airavata.registry.core.experiment.catalog.ExpCatResourceUtils;
@@ -31,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +51,11 @@ public class GatewayResource extends AbstractExpCatResource {
     private String gatewayAdminEmail;
     private String identityServerUserName;
     private String identityServerPasswordToken;
+    private String declinedReason;
+    private String oauthClientId;
+    private String oauthClientSecret;
+    private Timestamp requestCreationTime;
+    private String requesterUsername;
 
     public String getGatewayAdminFirstName() {
         return gatewayAdminFirstName;
@@ -146,6 +151,46 @@ public class GatewayResource extends AbstractExpCatResource {
 
     public void setReviewProposalDescription(String reviewProposalDescription) {
         this.reviewProposalDescription = reviewProposalDescription;
+    }
+
+    public String getDeclinedReason() {
+        return declinedReason;
+    }
+
+    public void setDeclinedReason(String declinedReason) {
+        this.declinedReason = declinedReason;
+    }
+
+    public String getOauthClientId() {
+        return oauthClientId;
+    }
+
+    public void setOauthClientId(String oauthClientId) {
+        this.oauthClientId = oauthClientId;
+    }
+
+    public String getOauthClientSecret() {
+        return oauthClientSecret;
+    }
+
+    public void setOauthClientSecret(String oauthClientSecret) {
+        this.oauthClientSecret = oauthClientSecret;
+    }
+
+    public Timestamp getRequestCreationTime() {
+        return requestCreationTime;
+    }
+
+    public void setRequestCreationTime(Timestamp requestCreationTime) {
+        this.requestCreationTime = requestCreationTime;
+    }
+
+    public String getRequesterUsername() {
+        return requesterUsername;
+    }
+
+    public void setRequesterUsername(String requesterUsername) {
+        this.requesterUsername = requesterUsername;
     }
 
     /**
@@ -432,8 +477,14 @@ public class GatewayResource extends AbstractExpCatResource {
             gateway.setGatewayAdminEmail(gatewayAdminEmail);
             gateway.setIdentityServerUserName(identityServerUserName);
             gateway.setIdentityServerPasswordToken(identityServerPasswordToken);
+            gateway.setDeclinedReason(declinedReason);
+            gateway.setOauthClientId(oauthClientId);
+            gateway.setGetOauthClientSecret(oauthClientSecret);
+            gateway.setRequestCreationTime(requestCreationTime);
+            gateway.setRequesterUsername(requesterUsername);
             if (existingGateway != null) {
                 existingGateway.setDomain(domain);
+                existingGateway.setGatewayApprovalStatus(gatewayApprovalStatus);
                 existingGateway.setGatewayName(gatewayName);
                 gateway.setGatewayApprovalStatus(gatewayApprovalStatus);
                 existingGateway.setEmailAddress(emailAddress);
@@ -446,6 +497,11 @@ public class GatewayResource extends AbstractExpCatResource {
                 existingGateway.setGatewayAdminEmail(gatewayAdminEmail);
                 existingGateway.setIdentityServerUserName(identityServerUserName);
                 existingGateway.setIdentityServerPasswordToken(identityServerPasswordToken);
+                existingGateway.setDeclinedReason(declinedReason);
+                existingGateway.setOauthClientId(oauthClientId);
+                existingGateway.setGetOauthClientSecret(oauthClientSecret);
+                existingGateway.setRequestCreationTime(requestCreationTime);
+                existingGateway.setRequesterUsername(requesterUsername);
                 em.merge(existingGateway);
             } else {
                 em.persist(gateway);

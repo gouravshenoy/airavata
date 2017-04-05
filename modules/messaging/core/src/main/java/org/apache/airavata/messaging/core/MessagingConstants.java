@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,15 +16,14 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
 package org.apache.airavata.messaging.core;
 
+@Deprecated
 public abstract class MessagingConstants {
     public static final String RABBITMQ_BROKER_URL = "rabbitmq.broker.url";
     public static final String RABBITMQ_STATUS_EXCHANGE_NAME = "rabbitmq.status.exchange.name";
-    public static final String RABBITMQ_TASK_LAUNCH_EXCHANGE_NAME = "rabbitmq.task.launch.exchange.name";
+    public static final String RABBITMQ_TASK_EXCHANGE_NAME = "rabbitmq.task.exchange.name";
 
     public static final String RABBIT_ROUTING_KEY = "routingKey";
     public static final String RABBIT_QUEUE= "queue";

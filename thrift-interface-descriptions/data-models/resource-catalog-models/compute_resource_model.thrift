@@ -52,7 +52,9 @@ enum ResourceJobManagerType {
     PBS,
     SLURM,
     LSF,
-    UGE
+    UGE,
+    CLOUD,
+    AIRAVATA_CUSTOM
 }
 
 /**
@@ -154,7 +156,11 @@ struct BatchQueue {
     4: optional i32 maxNodes,
     5: optional i32 maxProcessors,
     6: optional i32 maxJobsInQueue,
-    7: optional i32 maxMemory
+    7: optional i32 maxMemory,
+    8: optional i32 cpuPerNode,
+    9: optional i32 defaultNodeCount,
+    10: optional i32 defaultCPUCount,
+    11: optional bool isDefaultQueue
 }
 
 
@@ -193,9 +199,11 @@ enum JobSubmissionProtocol {
 **/
 enum MonitorMode {
    POLL_JOB_MANAGER,
+   CLOUD_JOB_MONITOR,
    JOB_EMAIL_NOTIFICATION_MONITOR,
    XSEDE_AMQP_SUBSCRIBE,
-   FORK
+   FORK,
+   LOCAL
 }
 
 enum DMType {
@@ -215,7 +223,7 @@ enum DMType {
 struct LOCALSubmission {
     1: required string jobSubmissionInterfaceId = airavata_commons.DEFAULT_ID,
     2: required ResourceJobManager resourceJobManager,
-    3: optional data_movement_models.SecurityProtocol securityProtocol
+    3: required data_movement_models.SecurityProtocol securityProtocol
 }
 
 /**

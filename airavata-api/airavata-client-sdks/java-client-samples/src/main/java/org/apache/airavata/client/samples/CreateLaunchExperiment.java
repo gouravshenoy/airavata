@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,16 +16,17 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
 package org.apache.airavata.client.samples;
 
 import org.apache.airavata.api.Airavata;
 import org.apache.airavata.api.client.AiravataClientFactory;
 import org.apache.airavata.client.tools.RegisterSampleApplications;
 import org.apache.airavata.client.tools.RegisterSampleApplicationsUtils;
-import org.apache.airavata.model.appcatalog.computeresource.*;
+import org.apache.airavata.model.appcatalog.computeresource.ComputeResourceDescription;
+import org.apache.airavata.model.appcatalog.computeresource.JobSubmissionInterface;
+import org.apache.airavata.model.appcatalog.computeresource.JobSubmissionProtocol;
+import org.apache.airavata.model.appcatalog.computeresource.UnicoreJobSubmission;
 import org.apache.airavata.model.application.io.DataType;
 import org.apache.airavata.model.application.io.InputDataObjectType;
 import org.apache.airavata.model.application.io.OutputDataObjectType;
@@ -33,7 +34,6 @@ import org.apache.airavata.model.commons.ErrorModel;
 import org.apache.airavata.model.data.movement.SecurityProtocol;
 import org.apache.airavata.model.error.*;
 import org.apache.airavata.model.experiment.ExperimentModel;
-import org.apache.airavata.model.experiment.ExperimentSummaryModel;
 import org.apache.airavata.model.experiment.UserConfigurationDataModel;
 import org.apache.airavata.model.scheduling.ComputationalResourceSchedulingModel;
 import org.apache.airavata.model.security.AuthzToken;
@@ -211,12 +211,12 @@ public class CreateLaunchExperiment {
                 allNotFinished = false;
                 for (String exId : experimentIds) {
                     ExperimentModel experiment = airavataClient.getExperiment(new AuthzToken(""), exId);
-                    if(!experiment.getExperimentStatus().getState().equals(ExperimentState.COMPLETED)&&
-                            !experiment.getExperimentStatus().getState().equals(ExperimentState.FAILED)
-                            &&!experiment.getExperimentStatus().getState().equals(ExperimentState.CANCELED)){
+                    if(!experiment.getExperimentStatus().get(0).getState().equals(ExperimentState.COMPLETED)&&
+                            !experiment.getExperimentStatus().get(0).getState().equals(ExperimentState.FAILED)
+                            &&!experiment.getExperimentStatus().get(0).getState().equals(ExperimentState.CANCELED)){
                         allNotFinished = true;
                     }
-                    System.out.println(experiment.getExperimentId() + " " + experiment.getExperimentStatus().getState().name());
+                    System.out.println(experiment.getExperimentId() + " " + experiment.getExperimentStatus().get(0).getState().name());
                 }
                 System.out.println("----------------------------------------------------");
                 Thread.sleep(10000);
@@ -864,7 +864,7 @@ public class CreateLaunchExperiment {
 
     public static String cloneExperiment(Airavata.Client client, String expId) throws TException {
         try {
-            return client.cloneExperiment(new AuthzToken(""), expId, "cloneExperiment1");
+            return client.cloneExperiment(new AuthzToken(""), expId, "cloneExperiment1", null);
         } catch (TException e) {
             logger.error("Error occured while creating the experiment...", e.getMessage());
             throw new TException(e);

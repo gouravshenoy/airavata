@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +16,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
 package org.apache.airavata.registry.core.experiment.catalog.resources;
 
@@ -356,6 +355,12 @@ public class Utils {
         gatewayResource.setGatewayAdminEmail(o.getGatewayAdminEmail());
         gatewayResource.setIdentityServerUserName(o.getIdentityServerUserName());
         gatewayResource.setIdentityServerPasswordToken(o.getIdentityServerPasswordToken());
+        gatewayResource.setDeclinedReason(o.getDeclinedReason());
+        gatewayResource.setOauthClientId(o.getOauthClientId());
+        gatewayResource.setRequestCreationTime(o.getRequestCreationTime());
+        gatewayResource.setRequesterUsername(o.getRequesterUsername());
+
+        gatewayResource.setOauthClientSecret(o.getGetOauthClientSecret());
         return gatewayResource;
     }
 
@@ -477,6 +482,7 @@ public class Utils {
             inputResource.setIsRequired(o.getIsRequired());
             inputResource.setRequiredToAddedToCmd(o.getRequiredToAddedToCmd());
             inputResource.setDataStaged(o.getDataStaged());
+            inputResource.setIsReadOnly(o.isReadOnly());
         }
         return inputResource;
     }
@@ -551,6 +557,7 @@ public class Utils {
             configurationDataResource.setOverrideAllocationProjectNumber(o.getOverrideAllocationProjectNumber());
             configurationDataResource.setStorageId(o.getStorageId());
             configurationDataResource.setExperimentDataDir(o.getExperimentDataDir());
+            configurationDataResource.setUseUserCRPref(o.isUseUserCRPref());
         }
         return configurationDataResource;
     }
@@ -575,6 +582,7 @@ public class Utils {
             processResource.setGenerateCert(o.getGenerateCert());
             processResource.setExperimentDataDir(o.getExperimentDataDir());
             processResource.setUserName(o.getUserName());
+            processResource.setUseUserCRPref(o.isUseUserCRPref());
         }
         return processResource;
     }
@@ -608,6 +616,7 @@ public class Utils {
             inputResource.setIsRequired(o.getIsRequired());
             inputResource.setRequiredToAddedToCmd(o.getRequiredToAddedToCmd());
             inputResource.setDataStaged(o.getDataStaged());
+            inputResource.setIsReadOnly(o.getIsReadOnly());
         }
         return inputResource;
     }

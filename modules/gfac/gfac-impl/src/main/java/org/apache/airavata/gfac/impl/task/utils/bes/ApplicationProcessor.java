@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,9 +16,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
-
 package org.apache.airavata.gfac.impl.task.utils.bes;
 
 import org.apache.airavata.gfac.core.context.ProcessContext;
@@ -108,7 +106,7 @@ public class ApplicationProcessor {
                 	// do nothing
                 }
                 
-                int totalThreadCount = context.getProcessModel().getResourceSchedule().getNumberOfThreads();
+                int totalThreadCount = context.getProcessModel().getProcessResourceSchedule().getNumberOfThreads();
                 // we take it as threads per processes
                 if(totalThreadCount > 0){
 					ThreadsPerProcessType tpp = ThreadsPerProcessType.Factory.newInstance();
